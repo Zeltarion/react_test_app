@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { connect } from 'react-redux'
 import {Field, reduxForm} from 'redux-form';
 
-import { authorizationRequest } from '../../actions/authAction';
+import { registrationRequest } from '../../actions/authAction';
 
 class Registration extends Component {
     constructor() {
@@ -10,8 +10,8 @@ class Registration extends Component {
     }
 
     render() {
-        const {isLogged, confirmRegistration, handleSubmit } = this.props;
-        console.log('IS logged: ', isLogged)
+        const {isLogged, handleSubmit } = this.props;
+        // console.log('IS logged: ', isLogged)
         return (
             <form onSubmit={handleSubmit}>
                 Is user already logged in: {''+isLogged}
@@ -45,7 +45,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => ({
-    confirmRegistration: () => { dispatch(authorizationRequest({})) }
+    // confirmRegistration: () => { dispatch(registrationRequest({})) }
 });
 
 // Connect flow
@@ -55,6 +55,14 @@ const RegistrationConnect = connect(mapStateToProps, mapDispatchToProps)(Registr
 export default reduxForm({
     form: 'registrationForm',
     onSubmit: (values, dispatch, props) => {
-        console.log('Form submit: ', values, props)
+        dispatch(registrationRequest(values));
+        // console.log('Form submit: ', values, props)
     },
+    validate: (values, props) => {
+        let errors = {
+
+        };
+
+        return errors;
+    }
 })(RegistrationConnect);

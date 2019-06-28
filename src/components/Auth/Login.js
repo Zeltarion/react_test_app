@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import { connect } from 'react-redux'
 import {Field, reduxForm} from 'redux-form';
+import {authorizationRequest, registrationRequest} from "../../actions/authAction";
+import {Redirect} from "react-router";
 // import {authorizationRequest} from "../../actions/authAction";
 
 class Login extends Component {
@@ -9,16 +11,21 @@ class Login extends Component {
     }
 
     render() {
-        const { handleSubmit } = this.props;
+        const { handleSubmit, isLogged } = this.props;
+
+        if (isLogged) {
+            return <Redirect to='/dashboard/profile' />
+        }
+
         return (
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="login-email-field">email:</label>
-                    <Field id='login-email-field' type='email'  component="input"/>
+                    <Field name='email' id='login-email-field' type='email'  component="input"/>
                 </div>
                 <div>
-                    <label for="login-pass-field">password:</label>
-                    <Field id='login-pass-field' type='text' component="input"/>
+                    <label htmlFor="login-pass-field">password:</label>
+                    <Field name='password' id='login-pass-field' type='text' component="input"/>
                 </div>
                 <div>
                     <button type='submit'>login</button>
@@ -29,7 +36,9 @@ class Login extends Component {
 }
 
 const mapStateToProps = (state) => {
+    const { isLogged } = state.authReducer;
     return {
+        isLogged
     };
 };
 
@@ -44,6 +53,6 @@ const LoginConnect = connect(mapStateToProps, mapDispatchToProps)(Login);
 export default reduxForm({
     form: 'loginForm',
     onSubmit: (values, dispatch, props) => {
-        console.log('Form submit: ', values, props)
+        dispatch(authorizationRequest(values));
     },
 })(LoginConnect);

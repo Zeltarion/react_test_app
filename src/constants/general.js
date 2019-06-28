@@ -2,6 +2,7 @@ export const API_PREFIX = '/api/v1/';
 export const PASSWORD_RECOVERY_PAGE = '/password-recovery';
 export const LOGIN_PAGE = '/login';
 export const START_PAGE = '/';
+export const BASE_URL = 'http://localhost:3030';
 
 export const VALIDATION = {
   /*eslint max-len: 0, no-useless-escape: 0*/

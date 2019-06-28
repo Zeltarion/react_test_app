@@ -8,7 +8,8 @@ import {
 } from 'react-router';
 
 import {
-    Route
+    Route,
+    Redirect
 } from 'react-router-dom';
 
 import App from './components/App/App';
@@ -16,12 +17,15 @@ import Home from './components/Home/Home';
 import Auth from './components/Auth';
 import Login from './components/Auth/Login';
 import Registration from './components/Auth/Registration';
+import Dashboard from './components/Dashboard/Dashboard';
+import NotFoundPageComponent from './components/NotFoundPageComponent/NotFoundPageComponent';
 
 import {
     LOGIN_PAGE,
     START_PAGE,
     PASSWORD_RECOVERY_PAGE,
-} from './constants/General';
+} from './constants/general';
+import Profile from "./components/Profile/Profile";
 
 
 function requireAuthMiddleware(nextState, replace) {
@@ -50,43 +54,76 @@ function requireAuthMiddleware(nextState, replace) {
     // });
 }
 
+
+// const getCurrentProfile = () => {
+//     try {
+//         let localStorage.getItem('profile');
+//     } catch (e) {
+//         return false;
+//     }
+// };
+
+const checkAuthUser = () => {
+    try {
+        return localStorage.getItem('accessToken');
+    } catch (e) {
+        return false;
+    }
+};
+const PrivateRoute = ({ component: Component, ...rest }) => (
+    <Route {...rest} render={(props) => (
+        checkAuthUser()
+            ? <Component {...props} />
+            : <Redirect to={{
+                pathname: '/login',
+                state: { from: props.location }
+            }} />
+    )} />);
+
 class Routes extends Component {
     render() {
         return (
-            <Switch>
-                <App>
+            <App>
+                <Route
+                    exact
+                    path={START_PAGE}
+                    component={Home}
+                >
+                </Route>
+                <Route
+                    exact
+                    path='/login'
+                    component={Login}
+                >
+                </Route>
+                <Route
+                    exact
+                    path='/registration'
+                    component={Registration}
+                >
+                </Route>
+                <PrivateRoute
+                    exact
+                    path='/dashboard'
+                    component={Dashboard}
+                >
                     <Route
-                        exact
-                        path={START_PAGE}
-                        component={Home}
+                        path='/dashboard/profile'
+                        component={Profile}
                     >
                     </Route>
                     <Route
-                        exact
-                        path='/auth'
-                        component={Auth}
+                        path='/dashboard/news'
+                        component={Profile}
                     >
-                        <Route
-                            exact
-                            path='/auth/login'
-                            component={Login}
-                        >
-                        </Route>
-
-                        <Route
-                            exact
-                            path='/auth/registration'
-                            component={Registration}
-                        >
-                        </Route>
                     </Route>
+                </PrivateRoute>
 
-                    {/*<Route*/}
-                    {/*path='*'*/}
-                    {/*component={NotFoundPageComponent}*/}
-                    {/*/>*/}
-                </App>
-            </Switch>
+                <Route
+                path='*'
+                component={NotFoundPageComponent}
+                />
+            </App>
         )
     }
 }
